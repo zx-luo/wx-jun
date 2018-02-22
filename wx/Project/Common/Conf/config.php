@@ -1,0 +1,16 @@
+<?php return array (
+  'DEFAULT_MODULE' => 'Wap',
+  'DB_HOST' => 'localhost',
+  'DB_NAME' => 'lvyue',
+  'DB_USER' => 'lvyue_user',
+  'DB_PWD' => 'lvyue_user',
+  'DB_PORT' => '3306',
+  'DB_PREFIX' => 'haokuai_',
+  'URL_MODEL' => 0,
+  'TMPL_FILE_DEPR' => '_',
+  'WX_TOKEN' => 'hongbao',
+  'DB_TYPE' => 'mysql',
+  'TMPL_ACTION_SUCCESS' => APP_PATH.'/Common/View/success.html',
+  'TMPL_ACTION_ERROR' => APP_PATH.'/Common/View/error.html',
+  'DB_BACKUP' => './db_backup',
+);

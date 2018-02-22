@@ -1,0 +1,197 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>个人中心</title>
+<?php $srconfig = include(getcwd().'/Project/Common/Conf/srconfig.php'); ?>
+<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<script src="__PUBLIC__/js/jquery-2.1.1.min.js"></script>
+<link href="__PUBLIC__/css/base.css?v={:rand(0,99)}" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/Weixin/css/index.css?v={:rand(0,99)}" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/Weixin/css/head.css?v={:rand(0,99)}" rel="stylesheet" type="text/css">
+<style></style>
+<script>
+$(document).ready(function () { 
+   $('.chongzhi').click(function(){
+	   $.post("{:U('Ajax/getchongnum')}",{},function(res){
+		   if(res.code==1){
+	          var djine = parseFloat($('input[name="djine"]').val());
+	          if(!djine){
+	            djine = parseFloat($('select[name="djine"]').val());
+	          }
+	          if(isNaN(djine) || djine < 0){
+			     $('.msgbox .txt').text('请输入金额！');
+			     $('.msgbox').show();
+			     return false;
+	          }
+	          location.href = "{:U('Chongzhi/chong?ctype=3&djine=')}"+djine;
+		   } else {
+			     $('.msgbox .txt').text('今天充值上限，请明天再来！');
+			     $('.msgbox').show();
+			     return false;
+		   }
+	   },'json');
+   });
+   //checkin-balance
+   $('.tixian').click(function(){
+       <?php if( $userzhanghu['uqianchong'] < intval($srconfig['lowest_withdraw_limit'])*100){ ?>
+		    $('.msgbox .txt').text('最少<?php echo $srconfig['lowest_withdraw_limit']; ?>元才能提现！');
+		    $('.msgbox').show();
+			return false;
+       <?php } else { ?>
+	   $(this).unbind();
+	   var djine = parseFloat($('#yue').val());
+	   //alert(djine);
+	   if(djine < 1){
+		    $('.msgbox .txt').text('最少一元才能提现！');
+		    $('.msgbox').show();
+			return false;
+	   }
+	   $.post("{:U('Ajax/getfaqiancishu')}",{},function(res){
+		   if(res.cishu < 99){
+			    //$.post("{:U('Tixian/wxtixian')}",{
+			    //    jine: parseFloat($('#yue').val())
+			    //},function(jes){
+			    //    alert(jes);
+			    //}, 'text');
+			    $.post("{:U('Tixian/wxtixian')}",{jine: parseFloat($('#yue').val())},function(jes){
+				    if(jes.code == 1){
+			           $('.msgbox .txt').text('提现成功！');
+		               $('.msgbox').show();
+					   $('#yue').text(0);
+					}
+				    if(jes.code == 2){
+			           $('.msgbox .txt').text('系统繁忙，稍后再试！');
+		               $('.msgbox').show();
+					}
+				    if(jes.code == 3){
+			           $('.msgbox .txt').text('最少一元才能提现！');
+		               $('.msgbox').show();
+					}	
+				},'json');
+		   } else {
+			    $('.msgbox .txt').text('今天超过上限，请明天再来！');
+		        $('.msgbox').show();
+		   }
+	   },'json');   
+       <?php } ?>
+   });
+   
+   
+    $('#checkin-draw').click(function(){
+    	$(this).unbind();
+    	var djine = parseFloat($('#checkin-balance').text());
+    	if(djine < 1){
+    		$('.msgbox .txt').text('最少一元才能提现！');
+    		$('.msgbox').show();
+    		return false;
+    	}
+    	$.post("{:U('checkin/checkinDrawCount')}",{},function(res){
+            //alert(JSON.stringify(res));
+    		if(res.cishu < 99){
+    			$.post("{:U('checkin/checkinDraw')}",{},function(jes){
+    				if(jes.code == 1){
+    					$('.msgbox .txt').text('提现成功！');
+    					$('.msgbox').show();
+    					$('#checkin-balance').text(0);
+    				}
+    				if(jes.code == 2){
+    					$('.msgbox .txt').text('系统繁忙，稍后再试！');
+    					$('.msgbox').show();
+    				}
+    				if(jes.code == 3){
+    					$('.msgbox .txt').text('最少一元才能提现！');
+    					$('.msgbox').show();
+    				}	
+    			},'json');
+    		} else {
+    			$('.msgbox .txt').text('今天超过上限，请明天再来！');
+    			$('.msgbox').show();
+    		}
+    	},'json');   
+    });
+});
+</script>
+
+</head>
+<body>
+<include file="Index/head" /> 
+<!--
+<ul class="ucenter-index member publickuang ul1">
+  <li>
+    <h3>{$userzhanghu[uhbqian]/100+$userzhanghu[uqianzheng]/100}</h3>
+    <p>可提现</p>
+  </li>
+  <li>
+    <h3>{$userzhanghu['uqianchong']/100}</h3>
+    <p>账户余额</p>
+  </li>
+  <li>
+    <h3>{$userzhanghu['uchongzong']/100}</h3>
+    <p>总充值</p>
+  </li>
+</ul>
+-->
+<ul class="ucenter-index member publickuang">
+  <li>
+    <h3>{$jiazunum|intval}</h3>
+    <p>推广人数</p>
+  </li>
+  <li>
+    <h3>{$userzhanghu['uzhengzong']/100}</h3>
+    <p>总佣金</p>
+  </li>
+  <li>
+    <h3>{$userzhanghu['uqianzheng']/100}</h3>
+    <p>待发佣金</p>
+  </li>
+</ul>
+<ul class="ucenter-index nav publickuang">
+  <li>充值额:
+  <?php if(count($srconfig['topup_candi']) == 1){ ?><font color="#ff2c4c">￥</font>
+    <input name="djine" style="border:1px solid #fff; height:26px; width:50px; padding-left:3px;" value="<?php echo $srconfig['topup_candi'][0];?>" type="number">
+    <?php } else { ?>
+        <select name="djine">
+            <?php
+            foreach($srconfig['topup_candi'] as $k=>$djine){ 
+                echo "<option value ='" . $djine . "'>¥" . $djine . "</option>";
+            }
+            ?>
+        </select>
+    <?php } ?>
+    <span class="current chongzhi">充值</span> </li>
+  <li>可提现: (总:¥<?php echo $userzhanghu['uqianchong']/100; ?>)
+    <?php
+    $srconfig['withdraw_multiple'] = intval($srconfig['withdraw_multiple']);
+    $max_item = intval($userzhanghu['uqianchong'])/100/$srconfig['withdraw_multiple'];
+    if($srconfig['withdraw_multiple']){
+    ?>
+        <select id="yue" name="yue" <?php if($max_item<1){ echo ' style="display: none;"'; }?>>
+            <?php
+            $srconfig['lowest_withdraw_limit'] = intval($srconfig['lowest_withdraw_limit']);
+                for(;$max_item>0;$max_item--){
+                    if(($max_item*$srconfig['withdraw_multiple'])<$srconfig['lowest_withdraw_limit']){
+                        break;
+                    }
+                    echo "<option value ='".($max_item*$srconfig['withdraw_multiple'])."'>¥".($max_item*$srconfig['withdraw_multiple'])."</option>";
+                }
+            ?>
+        </select>
+    <?php } else { ?>
+        <font color="#ff2c4c">￥<font id="yue"><?php echo $userzhanghu['uqianchong']/100; ?></font></font>
+    <?php } ?>
+  
+  <span class="current tixian">提现</span></li>
+ <li>可提现签到奖励:<font color="#ff2c4c">￥<font id="checkin-balance">{$userzhanghu['ucheckin']/100}</font></font><span id="checkin-draw" class="current">提现</span></li>
+  <li><a href="{:U('Index/kefu')}"> <img src="__PUBLIC__/Weixin/img/i1.png" class="imgico"> 联系客服 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a></li>
+  <li> <a href="{:U('Ucenter/hblist')}"> <img src="__PUBLIC__/Weixin/img/i2.png" class="imgico"> 红包记录 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a> </li>
+  <li><a href="{:U('Ucenter/saoleihb')}"> <img src="__PUBLIC__/Weixin/img/i2.png" class="imgico"> 扫雷记录 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a></li>
+  <li><a href="{:U('Ucenter/chonglist')}"> <img src="__PUBLIC__/Weixin/img/i3.png" class="imgico"> 充值记录 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a> </li>
+  <li><a href="{:U('Index/yongjin')}"> <img src="__PUBLIC__/Weixin/img/i2.png" class="imgico"> 佣金记录 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a></li>
+  <li><a href="{:U('Index/kefu')}"> <img src="__PUBLIC__/Weixin/img/i1.png" class="imgico"> 联系客服 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a></li>
+  <li><a href="{:U('Checkin/checkin_list')}"> <img src="__PUBLIC__/Weixin/img/i2.png" class="imgico"> 签到记录 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a></li>
+  <li><a href="{:U('Index/dailixq')}"> <img src="__PUBLIC__/Weixin/img/i2.png" class="imgico"> 佣金详情 <img src="__PUBLIC__/Weixin/img/1.png" class="imgstart"></a></li>
+</ul>
+<include file="Index/menu" />
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>欢迎登录后台管理系统</title>
+<link href="__PUBLIC__/Admin/css/base.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/Admin/css/right.css" rel="stylesheet" type="text/css">
+<script language="JavaScript" src="__PUBLIC__/js/jquery-2.1.1.min.js"></script>
+<script>
+$(document).ready(function(){	
+   $(function(){
+      $('.rightinfo tbody tr:odd').css("backgroundColor","#f5f8fa");	
+   })
+   $("#picadd").click(function(){
+	   $("#picgen").after("<li><label>&nbsp;</label><input name='file[]' type='file' class='dfinput'><i><img src='__PUBLIC__/Admin/image/t03.png' style='vertical-align:middle; cursor:pointer' onclick='removeFile(this);' /></i></li>");
+   });
+   $("input[name='cbeicode']").click(function(){
+	   if($(this).prop("checked")){
+		   $('.beifen').show();
+	   } else {
+	      $('.beifen').hide();  
+	   }
+   });
+});
+function removeFile(e){
+	$(e).parent().parent().remove();
+}
+</script>
+<style>
+<if condition="($sysconfig[cbeicode] eq 2) OR ($sysconfig[cbeicode] eq '') ">
+.beifen{ display:none;}
+</if>
+</style>
+</head>
+<body>
+<div class="place"> <span>位置：</span>
+  <ul class="placeul">
+    <li><a href="{:U('Index/center')}">首页</a></li>
+    <li>系统配置</li>
+  </ul>
+</div>
+<div class="formbody">
+  <form name="fadd" method="post" action="{:U('save')}" enctype="multipart/form-data">
+    <ul class="forminfo">
+      <li>
+        <label>充值金额限定</label>
+        <input name="topup_candi" type="text" value="{$srconfig['topup_candi']}" class="dfinput" />
+        <i>单位元(¥)。请以英文半角逗号「,」分隔各个可选金额项，如「10,20,50,100,200,500,1000」。当有一个数字时则让用户自己输入。</i></cite></li>
+      <li>
+        <label>最低提现额度</label>
+        <input name="lowest_withdraw_limit" type="text" value="{$srconfig['lowest_withdraw_limit']}" class="dfinput" />
+        <i>单位元(¥)，如20。</i></cite></li>
+      <li>
+        <label>提现倍数</label>
+        <input name="withdraw_multiple" type="text" value="{$srconfig['withdraw_multiple']}" class="dfinput" />
+        <i>单位元(¥)，如10，则每次体现必须为10,20,30等。</i></cite></li>
+      <li>
+        <label>新用户自动充值</label>
+        <input name="newuser_gift" type="text" value="{$srconfig['newuser_gift']}" class="dfinput" />
+        <i>单位元(¥)。0为不赠送</i></cite></li>
+      <li style="display: none;">
+        <label>大转盘金额设置</label>
+        <input name="zhuanpan_items" type="text" value="{$srconfig['zhuanpan_items']}" class="dfinput" />
+        <i>以英文半角逗号「,」分隔各项，一共八项。请使用「10-20,30-40,50-60,60-70,80-90,100-110,120-130,140-150」这样的格式。</i></cite></li>
+      <li>
+        <label>大转盘金额设置</label>
+        <input name="zhuanpan_items" type="text" value="{$srconfig['zhuanpan_items']}" class="dfinput" />
+        <i>以英文半角逗号「,」分隔各项，一共八项。请使用「10-20,30-40,50-60,60-70,80-90,100-110,120-130,140-150」这样的格式。</i></cite></li>
+      <li>
+        <label>大转盘金额设置</label>
+        <input name="zhuanpan_items" type="text" value="{$srconfig['zhuanpan_items']}" class="dfinput" />
+        <i>以英文半角逗号「,」分隔各项，一共八项。请使用「10-20,30-40,50-60,60-70,80-90,100-110,120-130,140-150」这样的格式。</i></cite></li>
+      <li>
+        <label>&nbsp;</label>
+        <input name="button" type="submit" class="btn" value="确认保存"/>
+      </li>
+    </ul>
+  </form>
+</div>
+</body>
+</html>

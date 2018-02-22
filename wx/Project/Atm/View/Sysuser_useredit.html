@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>欢迎登录后台管理系统</title>
+<link href="__PUBLIC__/Admin/css/base.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/Admin/css/right.css" rel="stylesheet" type="text/css">
+<script language="JavaScript" src="__PUBLIC__/js/jquery-2.1.1.min.js"></script>
+<style>
+  #permission li{ float:left; width:110px; line-height:0px; clear:none;}
+</style>
+<script>
+$(document).ready(function(){	
+   $(function(){
+      $('.rightinfo tbody tr:odd').css("backgroundColor","#f5f8fa");	
+   })
+   $(".btn").click(function(){
+	  var uname = $("input[name='uname']").val();
+	  var upass = $("input[name='upass']").val();
+	  var id = $("input[name='id']").val();
+	  var utype = $("input[name='utype']:checked").val();
+	  var tran_upass = $("input[name='tran_upass']").val();
+	  
+	  if(id){
+	     if(uname == ''){
+			 alert("填写错误");
+			 return false;
+		  }
+	  }else{
+		  if(upass == '' || uname == '' || tran_upass == ''){
+			 alert("填写错误");
+			 return false;
+		  }
+	  }
+	  var permission = [];
+	  for(var i=0;i<$("#permission input").length;i++){
+	     if($("#permission input").eq(i).is(":checked")){
+		     permission.push($("#permission input").eq(i).val());
+		 }
+	  }
+	   $.post("{:U('usersave')}",{uname:uname,id:id,utype:utype,upass:upass, tran_upass:tran_upass, permission:permission.join(",")},function(data){
+		   if(data == 1){
+			  alert('该用户已经存在');
+		   } else {
+		      alert("修改成功");
+		      location.href = "{:U(userlist)}";
+		   }
+	   });
+   });
+});
+</script>
+</head>
+<body>
+<div class="place"> <span>位置：</span>
+  <ul class="placeul">
+    <li><a href="{:U('Index/center')}">首页</a></li>
+    <li><a href="{:U('userlist')}">系统用户</a></li>
+    <li>编辑</li>
+  </ul>
+</div>
+<div class="formbody">
+  <div class="formtitle"><span>基本信息</span></div>
+  <ul class="forminfo">
+    <li>
+      <label>帐号</label>
+      <input name="uname" type="text" class="dfinput" value="{$user[uname]}" />
+      <input name="id" type="hidden"  value="{$user[id]}" />
+      <i></i></li>
+    <li>
+      <label>密码</label>
+      <input name="upass" type="password" class="dfinput" />
+      <i>不修改，请留空</i></li>
+    <li>
+	<li>
+      <label>二级密码</label>
+      <input name="tran_upass" type="password" class="dfinput" />
+      <i>不修改，请留空</i></li>
+    <li>
+      <label>分组</label>
+      <cite> <input type="radio" name="utype" value="2" <if condition="($user['utype'] eq 2) OR ($user['utype'] eq '') ">checked</if> > 用户&nbsp; 
+             <input type="radio" name="utype" value="1" <eq name="user['utype']" value="1">checked</eq> > 超级管理员</cite> <i></i> </li>
+     <li id="permission"><label>功能项</label>
+         <ul style="margin-left:85px;">
+             <li><label><input type="checkbox" name="" value="数据统计" <if condition="is_roll($user[permission], $user[utype],'数据统计') ">checked</if> /> 数据统计</label></li>
+             <li><label><input type="checkbox" name="" value="基本配置" <if condition="is_roll($user[permission], $user[utype],'基本配置') ">checked</if>/> 基本配置</label></li>
+             <li><label><input type="checkbox" name="" value="微信设置" <if condition="is_roll($user[permission], $user[utype],'微信设置') ">checked</if>/> 微信设置</label></li>
+             <li><label><input type="checkbox" name="" value="游戏设置" <if condition="is_roll($user[permission], $user[utype],'游戏设置') ">checked</if>/> 游戏设置</label></li>
+             <li><label><input type="checkbox" name="" value="会员管理" <if condition="is_roll($user[permission], $user[utype],'会员管理') ">checked</if>/> 会员管理</label></li>
+             <li><label><input type="checkbox" name="" value="提现充值记录" <if condition="is_roll($user[permission], $user[utype],'提现充值记录') ">checked</if>/> 提现充值</label></li>
+             <li><label><input type="checkbox" name="" value="佣金管理" <if condition="is_roll($user[permission], $user[utype],'佣金管理') ">checked</if>/> 佣金管理</label></li>
+             <li><label><input type="checkbox" name="" value="红包记录" <if condition="is_roll($user[permission], $user[utype],'红包记录') ">checked</if>/> 红包记录</label></li>
+             <li><label><input type="checkbox" name="" value="网站管理员" <if condition="is_roll($user[permission], $user[utype],'网站管理员') ">checked</if>/> 网站管理员</label></li>
+             <li><label><input type="checkbox" name="" value="数据管理" <if condition="is_roll($user[permission], $user[utype],'数据管理') ">checked</if>/> 数据管理</label></li>
+         </ul>
+    </li>
+    <li>
+      <label>&nbsp;</label>
+      <input name="button" type="button" class="btn" value="确认保存"/>
+    </li>
+  </ul>
+</div>
+</body>
+</html>
